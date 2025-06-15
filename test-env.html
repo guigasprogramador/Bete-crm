@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teste de Variáveis de Ambiente</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        .variable {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #f8f9fa;
+            border-left: 3px solid #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 Teste de Variáveis de Ambiente - CRM WhatsApp Manager</h1>
+        
+        <div id="status"></div>
+        
+        <h2>📋 Variáveis Necessárias</h2>
+        <div id="variables"></div>
+        
+        <h2>🌐 Todas as Variáveis VITE_</h2>
+        <div id="all-vars"></div>
+        
+        <h2>🔧 Informações do Build</h2>
+        <div id="build-info"></div>
+        
+        <h2>📝 Instruções</h2>
+        <div class="status warning">
+            <strong>Como usar este teste:</strong>
+            <ol>
+                <li>Faça o build da aplicação: <code>npm run build</code></li>
+                <li>Sirva os arquivos: <code>npm run preview</code></li>
+                <li>Acesse esta página no preview</li>
+                <li>Verifique se todas as variáveis estão presentes</li>
+            </ol>
+        </div>
+    </div>
+
+    <script type="module">
+        // Variáveis necessárias para o funcionamento
+        const requiredVars = {
+            'VITE_SUPABASE_URL': 'URL do projeto Supabase',
+            'VITE_SUPABASE_ANON_KEY': 'Chave anônima do Supabase',
+            'VITE_APP_NAME': 'Nome da aplicação',
+            'VITE_APP_VERSION': 'Versão da aplicação',
+            'VITE_DEV_MODE': 'Modo de desenvolvimento',
+            'VITE_DEBUG_MODE': 'Modo de debug'
+        };
+
+        function checkEnvironmentVariables() {
+            const statusDiv = document.getElementById('status');
+            const variablesDiv = document.getElementById('variables');
+            const allVarsDiv = document.getElementById('all-vars');
+            const buildInfoDiv = document.getElementById('build-info');
+            
+            let allPresent = true;
+            let variablesHtml = '';
+            
+            // Verificar variáveis necessárias
+            for (const [varName, description] of Object.entries(requiredVars)) {
+                const value = import.meta.env[varName];
+                const isPresent = value !== undefined && value !== null && value !== '';
+                
+                if (!isPresent) allPresent = false;
+                
+                variablesHtml += `
+                    <div class="variable">
+                        <strong>${varName}</strong>: ${description}<br>
+                        <span style="color: ${isPresent ? 'green' : 'red'}">
+                            ${isPresent ? '✅ PRESENTE' : '❌ AUSENTE'}
+                        </span>
+                        ${isPresent ? `<br><small>Valor: ${value.substring(0, 20)}...</small>` : ''}
+                    </div>
+                `;
+            }
+            
+            variablesDiv.innerHTML = variablesHtml;
+            
+            // Status geral
+            if (allPresent) {
+                statusDiv.innerHTML = `
+                    <div class="status success">
+                        <strong>✅ Sucesso!</strong> Todas as variáveis de ambiente estão presentes.
+                    </div>
+                `;
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Erro!</strong> Algumas variáveis de ambiente estão faltando.
+                        <br>Verifique a configuração no Cloudflare Pages ou Vercel.
+                    </div>
+                `;
+            }
+            
+            // Todas as variáveis VITE_
+            const allViteVars = Object.keys(import.meta.env)
+                .filter(key => key.startsWith('VITE_'))
+                .sort();
+            
+            if (allViteVars.length > 0) {
+                allVarsDiv.innerHTML = `
+                    <pre>${allViteVars.map(key => 
+                        `${key}: ${import.meta.env[key] ? 'PRESENTE' : 'AUSENTE'}`
+                    ).join('\n')}</pre>
+                `;
+            } else {
+                allVarsDiv.innerHTML = `
+                    <div class="status error">
+                        <strong>❌ Nenhuma variável VITE_ encontrada!</strong>
+                        <br>Isso indica um problema na configuração do build.
+                    </div>
+                `;
+            }
+            
+            // Informações do build
+            buildInfoDiv.innerHTML = `
+                <div class="variable">
+                    <strong>Modo:</strong> ${import.meta.env.MODE || 'Não definido'}<br>
+                    <strong>Base URL:</strong> ${import.meta.env.BASE_URL || 'Não definido'}<br>
+                    <strong>Produção:</strong> ${import.meta.env.PROD ? 'Sim' : 'Não'}<br>
+                    <strong>Desenvolvimento:</strong> ${import.meta.env.DEV ? 'Sim' : 'Não'}<br>
+                    <strong>Total de variáveis VITE_:</strong> ${allViteVars.length}
+                </div>
+            `;
+        }
+        
+        // Executar verificação quando a página carregar
+        checkEnvironmentVariables();
+        
+        // Log no console para debug
+        console.log('=== TESTE DE VARIÁVEIS DE AMBIENTE ===');
+        console.log('Variáveis VITE_ disponíveis:', Object.keys(import.meta.env).filter(k => k.startsWith('VITE_')));
+        console.log('import.meta.env completo:', import.meta.env);
+        
+        // Teste específico do Supabase
+        try {
+            const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+            const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+            
+            if (!supabaseUrl || !supabaseKey) {
+                console.error('❌ Variáveis do Supabase faltando:', {
+                    VITE_SUPABASE_URL: supabaseUrl ? 'PRESENTE' : 'AUSENTE',
+                    VITE_SUPABASE_ANON_KEY: supabaseKey ? 'PRESENTE' : 'AUSENTE'
+                });
+            } else {
+                console.log('✅ Variáveis do Supabase presentes!');
+            }
+        } catch (error) {
+            console.error('Erro ao verificar variáveis do Supabase:', error);
+        }
+    </script>
+</body>
+</html>

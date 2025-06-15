@@ -5,11 +5,23 @@
 import { createClient } from '@supabase/supabase-js';
 
 // Configurações do Supabase
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+// Debug: Log das variáveis de ambiente (remover em produção)
+console.log('Environment check:', {
+  VITE_SUPABASE_URL: supabaseUrl ? 'PRESENTE' : 'AUSENTE',
+  VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? 'PRESENTE' : 'AUSENTE',
+  allEnvVars: Object.keys(import.meta.env).filter(key => key.startsWith('VITE_'))
+});
 
 if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables');
+  console.error('Variáveis de ambiente faltando:', {
+    VITE_SUPABASE_URL: supabaseUrl,
+    VITE_SUPABASE_ANON_KEY: supabaseAnonKey ? 'PRESENTE' : 'AUSENTE',
+    availableVars: Object.keys(import.meta.env)
+  });
+  throw new Error(`Missing Supabase environment variables: URL=${!!supabaseUrl}, KEY=${!!supabaseAnonKey}`);
 }
 
 // Criar cliente Supabase
