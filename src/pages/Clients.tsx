@@ -29,8 +29,8 @@ import { useToast } from "@/hooks/use-toast";
 
 const Clients = () => {
   const { clients, loading, addClient, updateClient, deleteClient, searchClients } = useSupabaseClients();
-  const { addAppointment } = useSupabaseAppointments();
-  const { payments } = useSupabasePayments();
+  const { addAppointment, getAppointmentsByClient } = useSupabaseAppointments();
+  const { payments, getPaymentsByClient } = useSupabasePayments();
   const { exportClients } = useExport();
   const { toast } = useToast();
   

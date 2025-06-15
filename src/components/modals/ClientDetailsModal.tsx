@@ -54,11 +54,11 @@ export const ClientDetailsModal = ({
               <div><strong>Nome:</strong> {client.name}</div>
               <div><strong>Telefone:</strong> {client.phone}</div>
               <div><strong>Email:</strong> {client.email}</div>
-              <div><strong>Data de Cadastro:</strong> {client.registrationDate}</div>
-              <div><strong>Último Contato:</strong> {client.lastContact}</div>
+              <div><strong>Data de Cadastro:</strong> {client.registration_date ? new Date(client.registration_date).toLocaleDateString('pt-BR') : 'N/A'}</div>
+              <div><strong>Último Contato:</strong> {client.last_contact ? new Date(client.last_contact).toLocaleDateString('pt-BR') : 'N/A'}</div>
               <div><strong>Status:</strong> <Badge className={`${getStatusBadge(client.status)} text-white ml-2`}>{client.status}</Badge></div>
-              <div><strong>Total Gasto:</strong> {client.totalSpent}</div>
-              <div><strong>Total de Atendimentos:</strong> {client.totalAppointments}</div>
+              <div><strong>Total Gasto:</strong> R$ {client.total_spent ? client.total_spent.toFixed(2) : '0,00'}</div>
+              <div><strong>Total de Atendimentos:</strong> {client.total_appointments || 0}</div>
             </CardContent>
           </Card>
 
@@ -74,16 +74,16 @@ export const ClientDetailsModal = ({
                     <div key={appointment.id} className="border-l-4 border-blue-500 pl-4 py-2">
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="font-medium">{appointment.service}</div>
+                          <div className="font-medium">{appointment.service_name}</div>
                           <div className="text-sm text-gray-500">
-                            {new Date(appointment.date).toLocaleDateString('pt-BR')} às {appointment.time}
+                            {new Date(appointment.appointment_date).toLocaleDateString('pt-BR')} às {appointment.appointment_time}
                           </div>
                           {appointment.notes && (
                             <div className="text-sm text-gray-600 mt-1">{appointment.notes}</div>
                           )}
                         </div>
                         <div className="text-right">
-                          <div className="font-medium">{appointment.value}</div>
+                          <div className="font-medium">R$ {appointment.value ? appointment.value.toFixed(2) : '0,00'}</div>
                           <Badge className="text-xs">{appointment.status}</Badge>
                         </div>
                       </div>
@@ -108,23 +108,23 @@ export const ClientDetailsModal = ({
                     <div key={payment.id} className="border-l-4 border-green-500 pl-4 py-2">
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="font-medium">{payment.service}</div>
+                          <div className="font-medium">{payment.service_name}</div>
                           <div className="text-sm text-gray-500">
-                            Vencimento: {new Date(payment.dueDate).toLocaleDateString('pt-BR')}
+                            Vencimento: {new Date(payment.due_date).toLocaleDateString('pt-BR')}
                           </div>
-                          {payment.paymentDate && (
+                          {payment.payment_date && (
                             <div className="text-sm text-gray-600">
-                              Pago em: {new Date(payment.paymentDate).toLocaleDateString('pt-BR')}
+                              Pago em: {new Date(payment.payment_date).toLocaleDateString('pt-BR')}
                             </div>
                           )}
                         </div>
                         <div className="text-right">
-                          <div className="font-medium">{payment.value}</div>
+                          <div className="font-medium">R$ {payment.value ? payment.value.toFixed(2) : '0,00'}</div>
                           <Badge className={`text-xs ${payment.status === 'Pago' ? 'bg-green-500' : payment.status === 'Atrasado' ? 'bg-red-500' : 'bg-yellow-500'} text-white`}>
                             {payment.status}
                           </Badge>
-                          {payment.method && (
-                            <div className="text-xs text-gray-500 mt-1">{payment.method}</div>
+                          {payment.payment_method && (
+                            <div className="text-xs text-gray-500 mt-1">{payment.payment_method}</div>
                           )}
                         </div>
                       </div>
