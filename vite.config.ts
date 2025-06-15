@@ -31,13 +31,16 @@ export default defineConfig(({ mode }) => {
     // Expose env variables to the client
     define: {
       __APP_ENV__: JSON.stringify(env.APP_ENV),
-      // Explicitly define Supabase variables for production
-      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL),
-      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY),
-      'import.meta.env.VITE_APP_NAME': JSON.stringify(env.VITE_APP_NAME),
-      'import.meta.env.VITE_APP_VERSION': JSON.stringify(env.VITE_APP_VERSION),
-      'import.meta.env.VITE_DEV_MODE': JSON.stringify(env.VITE_DEV_MODE),
-      'import.meta.env.VITE_DEBUG_MODE': JSON.stringify(env.VITE_DEBUG_MODE),
+      // Explicitly define all import.meta.env variables for production
+      'import.meta.env.VITE_SUPABASE_URL': JSON.stringify(env.VITE_SUPABASE_URL || process.env.VITE_SUPABASE_URL),
+      'import.meta.env.VITE_SUPABASE_ANON_KEY': JSON.stringify(env.VITE_SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY),
+      'import.meta.env.VITE_APP_NAME': JSON.stringify(env.VITE_APP_NAME || process.env.VITE_APP_NAME),
+      'import.meta.env.VITE_APP_VERSION': JSON.stringify(env.VITE_APP_VERSION || process.env.VITE_APP_VERSION),
+      'import.meta.env.VITE_DEV_MODE': JSON.stringify(env.VITE_DEV_MODE || process.env.VITE_DEV_MODE),
+      'import.meta.env.VITE_DEBUG_MODE': JSON.stringify(env.VITE_DEBUG_MODE || process.env.VITE_DEBUG_MODE),
+      'import.meta.env.MODE': JSON.stringify(mode),
+      'import.meta.env.PROD': mode === 'production',
+      'import.meta.env.DEV': mode === 'development',
     },
     // Ensure environment variables are available
     envPrefix: 'VITE_',
