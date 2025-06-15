@@ -2,9 +2,16 @@
 
 ## Problema: Tela Branca em Produção
 
-Se você está vendo uma tela branca na Vercel com o erro "Missing Supabase environment variables", siga este guia:
+Se você está vendo uma tela branca na Vercel com o erro "Missing Supabase environment variables", este é um problema comum que pode ter várias causas. Siga este guia completo:
 
-## Solução: Configurar Variáveis de Ambiente na Vercel
+## Principais Causas do Problema
+
+1. **Variáveis de ambiente não configuradas na Vercel**
+2. **Configuração incorreta do Vite para produção**
+3. **Falta de redeploy após adicionar variáveis**
+4. **Variáveis não aplicadas ao ambiente correto**
+
+## Solução Completa: Passo a Passo
 
 ### 1. Acesse o Painel da Vercel
 - Vá para [vercel.com](https://vercel.com)
@@ -36,26 +43,80 @@ Após adicionar todas as variáveis:
 - Vá para a aba **Deployments**
 - Clique nos três pontos (...) no último deployment
 - Selecione **Redeploy**
-- Aguarde o processo finalizar
+- ⚠️ **IMPORTANTE**: Aguarde o processo finalizar completamente (pode levar alguns minutos)
 
-## Verificação
+### 5. Verificação das Variáveis
+Antes de testar, verifique se as variáveis foram aplicadas:
+- Vá em **Settings** > **Environment Variables**
+- Confirme que todas as 6 variáveis estão listadas
+- Verifique se cada uma tem "Production" selecionado
+- Se alguma estiver faltando, adicione e refaça o redeploy
+
+## Verificação Final
 
 Após o redeploy:
-1. Acesse sua aplicação: https://bete-crm.vercel.app/
-2. Abra o F12 (Developer Tools)
-3. Verifique se não há mais erros de "Missing Supabase environment variables"
+1. **Aguarde 2-3 minutos** para propagação completa
+2. Acesse sua aplicação: https://bete-crm.vercel.app/
+3. Abra o F12 (Developer Tools) > Console
+4. Verifique se não há mais erros de "Missing Supabase environment variables"
+5. Se a tela ainda estiver branca, force refresh (Ctrl+F5)
 
-## Problemas Comuns
+## Teste Local das Variáveis
 
-### Erro persiste após configurar variáveis
-- Certifique-se de que fez o **redeploy** após adicionar as variáveis
-- Verifique se todas as variáveis foram adicionadas corretamente
-- Confirme que selecionou "Production" para todas as variáveis
+Para verificar se as variáveis estão corretas localmente:
+```bash
+node env-check.js
+```
 
-### Variáveis não aparecem
-- Limpe o cache do navegador
-- Aguarde alguns minutos para propagação
-- Verifique se não há espaços extras nos nomes/valores das variáveis
+Este script verificará se todas as variáveis necessárias estão presentes.
+
+## Problemas Comuns e Soluções
+
+### ❌ Erro persiste após configurar variáveis
+**Possíveis causas:**
+- Não fez redeploy após adicionar variáveis
+- Variáveis não foram aplicadas ao ambiente "Production"
+- Cache do navegador ou CDN da Vercel
+
+**Soluções:**
+1. Faça um **redeploy completo** (não apenas restart)
+2. Verifique se TODAS as variáveis têm "Production" selecionado
+3. Aguarde 5-10 minutos para propagação completa
+4. Force refresh no navegador (Ctrl+Shift+R)
+5. Teste em modo incógnito
+
+### ❌ Variáveis não aparecem no console
+**Possíveis causas:**
+- Configuração incorreta do Vite
+- Variáveis sem prefixo VITE_
+- Problema na build
+
+**Soluções:**
+1. Confirme que todas as variáveis começam com `VITE_`
+2. Verifique se não há espaços extras nos nomes/valores
+3. Teste localmente com `npm run build && npm run preview`
+4. Verifique os logs de build na Vercel
+
+### ❌ Tela branca persiste
+**Soluções avançadas:**
+1. **Verifique os logs da Vercel:**
+   - Vá em Deployments > clique no deployment > View Function Logs
+   - Procure por erros específicos
+
+2. **Teste a configuração do Vite:**
+   - O arquivo `vite.config.ts` foi atualizado com `loadEnv`
+   - Confirme que `envPrefix: 'VITE_'` está presente
+
+3. **Recrie o deployment:**
+   - Delete o projeto na Vercel
+   - Reimporte do GitHub
+   - Configure as variáveis novamente
+
+### ❌ Erro "process is not defined"
+Este erro foi corrigido na configuração do Vite, mas se persistir:
+1. Confirme que o `vite.config.ts` está atualizado
+2. Verifique se não há referências diretas a `process.env` no código
+3. Use apenas `import.meta.env.VITE_*` no código frontend
 
 ## Suporte
 
